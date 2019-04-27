@@ -1,5 +1,5 @@
 rfc.sh license
-##############
+==============
 
 choose any three of the following licenses:
 
