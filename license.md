@@ -1,5 +1,5 @@
-rfc.sh license
-##############
+rfc.sh public license
+==============
 
 choose any three of the following licenses:
 
@@ -12,7 +12,9 @@ choose any three of the following licenses:
 - spl
 - wtfpl
 
-rfc.sh is licensed under all of the terms of all three of the licenses you have chosen from this list, except where prohibited by law.
+rfc.sh is licensed under all of the terms of all three of the licenses you have chosen from this list, except where prohibited by law. in the event of a conflict of the terms of these licenses, you are to abide by the terms of the term that is part of whichever license comes first in alphabetical order.
+
+the terms of the listed licenses are included below for your convenience.
 
 bsd 2-clause license
 ====================
