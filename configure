@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo this repository is for a shell script. is not a compiled program.
+exit 0

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+keywords="MUST NOT REQUIRED SHALL SHOULD RECOMMENDED MAY OPTIONAL "
+
+if [ "$1" = "6919" ]; then
+	keywords="$keywords CONSIDER REALLY OUGHT TO WOULD PROBABLY WISH COULD POSSIBLE MIGHT"
+	keywords="$keywords (BUT WE KNOW YOU WON'T)"
+fi
+
+c_red="\\\\e[0;31m"
+c_reset="\\\\e[0m"
+
+url="https://tools.ietf.org/rfc/rfc${1}.txt"
+
+text=$(wget -qO- $url)
+
+for word in $keywords; do
+	text=$(echo "$text" | sed -e "s/${word}/${c_red}${word}${c_reset}/g" -e "/\[Page .\]/d" -e "/RFC.*[0-9]\{4,\}/d" -e "s///g" | cat -s)
+done
+
+echo -e "$text" | less -R
