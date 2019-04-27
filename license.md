@@ -1,4 +1,4 @@
-rfc.sh license
+rfc.sh public license
 ==============
 
 choose any three of the following licenses:
