@@ -6,3 +6,5 @@ this script fetches an rfc and sends it into less, highlighting the keywords out
 example usage:
 
     $ rfc 2119
+
+![image showing rfc in action](screenshot.png)
