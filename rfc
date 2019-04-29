@@ -60,8 +60,8 @@ search() {
 }
 
 case "$1" in
-	''|*[0-9]) showrfc $1;;
-	-h) printhelp;;
+	*[0-9]) showrfc $1;;
+	''|-h) printhelp;;
 	*) search $@;;
 esac
 
