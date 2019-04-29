@@ -1,21 +1,68 @@
 #!/bin/sh
 
-keywords="MUST NOT REQUIRED SHALL SHOULD RECOMMENDED MAY OPTIONAL "
-
-if [ "$1" = "6919" ]; then
-	keywords="$keywords CONSIDER REALLY OUGHT TO WOULD PROBABLY WISH COULD POSSIBLE MIGHT"
-	keywords="$keywords (BUT WE KNOW YOU WON'T)"
-fi
-
 c_red="\\\\e[0;31m"
 c_reset="\\\\e[0m"
 
-url="https://tools.ietf.org/rfc/rfc${1}.txt"
 
-text=$(wget -qO- $url)
+printhelp() {
+	echo "rfc - utility to search for and read ietf rfc documents"
+	echo "usage:"
+	echo "  rfc <rfc-number>	finds the rfc of the given number and displays it"
+	echo -n ""
+	echo "  rfc <search query>	searches titles of all rfc for the query; displays"
+	echo -n ""
+	echo "				if only one match, otherwise lists all results"
+	echo -n ""
+	echo "  rfc -h			show this help"
+	exit 0
+}
 
-for word in $keywords; do
-	text=$(echo "$text" | sed -e "s/${word}/${c_red}${word}${c_reset}/g" -e "/\[Page .\]/d" -e "/RFC.*[0-9]\{4,\}/d" -e "s///g" | cat -s)
-done
+showrfc() {
+	rfc=$1
+	keywords="MUST NOT REQUIRED SHALL SHOULD RECOMMENDED MAY OPTIONAL "
 
-echo -e "$text" | less -R
+	if [ "$rfc" = "6919" ]; then
+		keywords="$keywords CONSIDER REALLY OUGHT TO WOULD PROBABLY WISH COULD POSSIBLE MIGHT"
+		keywords="$keywords (BUT WE KNOW YOU WON'T)"
+	fi
+
+	url="https://tools.ietf.org/rfc/rfc${rfc}.txt"
+
+	text=$(wget -qO- $url)
+
+	if [ "$?" != "0" ]; then
+		echo "couldn't find rfc $rfc" 1>&2
+		exit 1
+	fi
+
+	for word in $keywords; do
+		text=$(echo "$text" | sed -e "s/${word}/${c_red}${word}${c_reset}/g" -e "/\[Page .\]/d" -e "/RFC.*[0-9]\{4,\}/d" -e "s///g" | cat -s)
+	done
+
+	echo "$text" | less -R
+	exit 0
+}
+
+search() {
+	index=$(wget -qO- https://www.rfc-editor.org/in-notes/rfc-index.txt)
+
+	for term in $@; do
+		index=$(echo "$index" | grep -i "^[0-9]\{1,\} .*$term.*") 
+	done
+
+	lines=$(echo "$index" | wc -l)
+
+	case $lines in
+		0) echo "no rfcs were found matching all terms"; exit 1;;
+		1) showrfc $(echo $index | awk '{print $1}');;
+		*) echo "the following matching rfcs were found:"; echo "$index"; exit 0 ;;
+	esac
+}
+
+case "$1" in
+	''|*[0-9]) showrfc $1;;
+	-h) printhelp;;
+	*) search $@;;
+esac
+
+
