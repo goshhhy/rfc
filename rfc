@@ -3,6 +3,14 @@
 c_red="\\\\e[0;31m"
 c_reset="\\\\e[0m"
 
+if [ -s "$(command -v curl)" ]; then
+    cmd="curl -s"
+elif [ -s "$(command -v wget)" ]; then
+    cmd="wget -qO-"
+else
+    echo "You don't have curl or wget installed." >&2
+    exit 1
+fi
 
 printhelp() {
 	echo "rfc - utility to search for and read ietf rfc documents"
@@ -28,7 +36,7 @@ showrfc() {
 
 	url="https://tools.ietf.org/rfc/rfc${rfc}.txt"
 
-	text=$(wget -qO- $url)
+	text=$($cmd $url)
 
 	if [ "$?" != "0" ]; then
 		echo "couldn't find rfc $rfc" 1>&2
@@ -44,7 +52,7 @@ showrfc() {
 }
 
 search() {
-	index=$(wget -qO- https://www.rfc-editor.org/in-notes/rfc-index.txt)
+	index=$($cmd https://www.rfc-editor.org/in-notes/rfc-index.txt)
 
 	for term in $@; do
 		index=$(echo "$index" | grep -i "^[0-9]\{1,\} .*$term.*") 
